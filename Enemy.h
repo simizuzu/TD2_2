@@ -3,24 +3,28 @@
 #include "WorldTransform.h"
 #include "Affine.h"
 
-class Skydome
+class Enemy
 {
 public:
-	/// <summary>
-	/// 初期化
-	/// </summary>
+	//初期化
 	void Initialize(Model* model);
 
-	/// <summary>
-	/// 描画
-	/// </summary>
+	//更新
+	void Update();
+
+	//描画
 	void Draw(ViewProjection* viewProjection);
+
+	//シェイク
+	void Shake();
+
 private:
-	// ワールド変換データ
+	//ワールド変換データ
 	WorldTransform worldTransform_;
 	//モデル
 	Model* model_ = nullptr;
-	//テクスチャハンドル
-	//uint32_t textureHandle_ = 0u;
+
+	//シェイク時の移動距離
+	float shakeX = 0.2f;
 };
 

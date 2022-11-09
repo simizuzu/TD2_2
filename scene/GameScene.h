@@ -9,6 +9,8 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Skydome.h"
+#include "Enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -41,12 +43,25 @@ class GameScene {
 	/// </summary>
 	void Draw();
 
+	//敵
+	Enemy* enemy_ = nullptr;
+
+	//天球
+	Skydome* skydome_ = nullptr;
+
   private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
 
+	//モデル
+	Model* modelEnemy_ = nullptr;
+	//天球のモデル
+	Model* modelSkydome_ = nullptr;
+
+	//ビュープロジェクション
+	ViewProjection viewProjection_;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

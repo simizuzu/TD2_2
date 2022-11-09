@@ -12,9 +12,25 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
+
+	modelEnemy_ = Model::CreateFromOBJ("Enemy", true);
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+
+	//敵生成
+	enemy_ = new Enemy();
+	enemy_->Initialize(modelEnemy_);
+
+	//天球の生成
+	skydome_ = new Skydome();
+	//天球の初期化
+	skydome_->Initialize(modelSkydome_);
+
+	viewProjection_.Initialize();
 }
 
-void GameScene::Update() {}
+void GameScene::Update() {
+
+}
 
 void GameScene::Draw() {
 
@@ -42,6 +58,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	enemy_->Draw(&viewProjection_);
+	skydome_->Draw(&viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

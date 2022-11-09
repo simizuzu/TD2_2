@@ -1,20 +1,20 @@
 #include "Skydome.h"
+#include <cassert>
 
-void Skydome::Initialize()
-{
-	// ワールド変換の初期化
+void Skydome::Initialize(Model* model) {
+	// NULLポインタチェック
+	assert(model);
+
+	//引数として受け取ったデータをメンバ変数に記録する
+	model_ = model;
+
+	//ワールド変換データの初期化
 	worldTransform_.Initialize();
-	// スケールを設定
-	worldTransform_.scale_ = { 100.0f,100.0f,100.0f };
-	// スケーリング行列
-	Affine::CreateMatIdentity(worldTransform_.matWorld_);
-	Affine::CreateMatScale(worldTransform_.matWorld_, worldTransform_.scale_);
-	Affine::CreateMatRot(worldTransform_.matWorld_, { 0,0,0 });
-	Affine::CreateMatTrans(worldTransform_.matWorld_, { 0,0,0 });
-	// 行列の転送
-	worldTransform_.TransferMatrix();
 
-	model_.reset(Model::CreateFromOBJ("skydome", true));
+	Affine::CreateMatScale(worldTransform_.matWorld_, { 100.0f,100.0f,100.0f });
+
+	//行列更新
+	worldTransform_.TransferMatrix();
 }
 
 void Skydome::Draw(ViewProjection* viewProjection)
