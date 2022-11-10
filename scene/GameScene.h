@@ -11,6 +11,18 @@
 #include "WorldTransform.h"
 #include "Skydome.h"
 #include "Enemy.h"
+#include "PlayerModel.h"
+#include "MoveCamera.h"
+
+enum Scene {
+	title,
+	appear,
+	game,
+	pause,
+	gameover,
+	clear
+};
+
 
 /// <summary>
 /// ゲームシーン
@@ -43,6 +55,9 @@ class GameScene {
 	/// </summary>
 	void Draw();
 
+	//自機
+	PlayerModel* player_ = nullptr;
+
 	//敵
 	Enemy* enemy_ = nullptr;
 
@@ -55,6 +70,9 @@ class GameScene {
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
 
+	//シーン
+	Scene scene = title;
+
 	//モデル
 	Model* modelEnemy_ = nullptr;
 	//天球のモデル
@@ -62,6 +80,9 @@ class GameScene {
 
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
+	//カメラの動き
+	MoveCamera moveCamera_;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

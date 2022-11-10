@@ -3,11 +3,14 @@
 #include "WorldTransform.h"
 #include "Affine.h"
 
+//シェイク開始する時間
+static const float SHAKE_START = 50.0f;
+
 class Enemy
 {
 public:
 	//初期化
-	void Initialize(Model* model);
+	void Initialize();
 
 	//更新
 	void Update();
@@ -15,16 +18,28 @@ public:
 	//描画
 	void Draw(ViewProjection* viewProjection);
 
+	//登場時の動き
+	void AppearMove();
+
 	//シェイク
 	void Shake();
+
+	//ワールド行列のゲッター
+	WorldTransform GetWorldTransform() { return worldTransform_; }
+	//登場時の経過時間のゲッター
+	float GetAppearTimer() { return appearTimer; }
 
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 	//モデル
-	Model* model_ = nullptr;
+	std::unique_ptr<Model> model_;
 
 	//シェイク時の移動距離
-	float shakeX = 0.2f;
+	float shakeVal = 1.000f;
+	//登場時の経過時間
+	float appearTimer = 0.0f;
+
+
 };
 
