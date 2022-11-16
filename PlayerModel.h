@@ -3,6 +3,7 @@
 #include "WorldTransform.h"
 #include "Affine.h"
 #include "Input.h"
+#include "PlayerBullet.h"
 
 class PlayerModel
 {
@@ -22,8 +23,12 @@ public:
 	/// </summary>
 	void Draw(ViewProjection* viewProjection);
 
+	void Attack();
+
 	//ワールド行列のゲッター
 	WorldTransform GetWorldTransform() { return worldTransform_; }
+
+	const std::list < std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }
 
 private:
 	const float PI = 3.14159f;
@@ -37,4 +42,9 @@ private:
 
 	//ラジアン
 	float radian;
+
+	Vector3 playerPos;
+
+	//弾
+	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 };

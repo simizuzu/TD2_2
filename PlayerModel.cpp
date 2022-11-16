@@ -56,9 +56,44 @@ void PlayerModel::Update()
 	// 行列の転送
 	worldTransform_.TransferMatrix();
 
+	//デスフラグの立った弾を削除
+	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) { return bullet->IsDead(); });
+
+	//キャラクター攻撃処理
+	Attack();
+
+	//弾更新
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
+		bullet->Update(worldTransform_);
+	}
+
 }
 
 void PlayerModel::Draw(ViewProjection* viewProjection)
 {
 	model_->Draw(worldTransform_, *viewProjection);
+
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
+		bullet->Draw(viewProjection);
+	}
+
+}
+
+void PlayerModel::Attack() {
+	if (input_->PushKey(DIK_RETURN)) {
+
+		playerPos = worldTransform_.translation_;
+
+		//弾の速度
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(kBulletSpeed * sinf(worldTransform_.rotation_.y), 0, kBulletSpeed * cosf(worldTransform_.rotation_.y));
+
+		//弾生成し、初期化
+		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+		newBullet->Initilize(playerPos, velocity);
+
+		//弾を登録する
+		bullets_.push_back(std::move(newBullet));
+
+	}
 }
