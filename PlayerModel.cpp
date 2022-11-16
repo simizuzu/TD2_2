@@ -80,7 +80,7 @@ void PlayerModel::Draw(ViewProjection* viewProjection)
 }
 
 void PlayerModel::Attack() {
-	if (input_->PushKey(DIK_RETURN)) {
+	if (input_->PushKey(DIK_SPACE)) {
 
 		playerPos = worldTransform_.translation_;
 
