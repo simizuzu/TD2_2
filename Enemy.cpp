@@ -2,11 +2,16 @@
 
 void Enemy::Initialize()
 {
+	//シェイク時の移動距離
+	shakeVal = 1.000f;
+	//登場時の経過時間
+	appearTimer = 0.0f;
+
 	//ワールド変換データの初期化
 	worldTransform_.Initialize();
 
 	//初期座標
-	worldTransform_.translation_ = { 0.0f,20.0f,0.0f };
+	worldTransform_.translation_ = { 0.0f,30.0f,0.0f };
 	worldTransform_.scale_ = { 10.0f,10.0f,10.0f };
 
 	//アフィン変換

@@ -182,9 +182,6 @@
     <ClInclude Include="PlayerModel.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Easing.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="MoveCamera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>

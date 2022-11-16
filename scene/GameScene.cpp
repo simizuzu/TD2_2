@@ -42,6 +42,13 @@ void GameScene::Update() {
 
 		//スペース押したらシーン切り替え
 		if (input_->TriggerKey(DIK_SPACE)) {
+			//初期化
+			moveCamera_.Initialize();
+			viewProjection_.Initialize();
+			player_->Initialize();
+			enemy_->Initialize();
+
+			//シーン移動
 			scene = appear;
 		}
 
@@ -52,6 +59,10 @@ void GameScene::Update() {
 		enemy_->AppearMove();
 
 		moveCamera_.Appear(&viewProjection_, enemy_);
+
+		if (moveCamera_.GetFlame3() >= MAX_FLAME) {
+			scene = game;
+		}
 
 		if (input_->TriggerKey(DIK_SPACE)) {
 			scene = game;
@@ -65,16 +76,6 @@ void GameScene::Update() {
 		break;
 
 	case game:
-		//if (input_->PushKey(DIK_A)) {
-		//	radian += 0.003f;
-		//}
-		//if (input_->PushKey(DIK_D)) {
-		//	radian -= 0.003f;
-		//}
-
-		//if (radian >= 2.0f) {
-		//	radian = 0.0f;
-		//}
 
 		player_->Update();
 		enemy_->Update();
@@ -87,6 +88,7 @@ void GameScene::Update() {
 		debugText_->SetPos(20.0f, 40.0f);
 		debugText_->Printf("%f,%f,%f", viewProjection_.target.x, viewProjection_.target.y, viewProjection_.target.z);
 
+		//Wキーで視点変更
 		if (input_->PushKey(DIK_W)) {
 			viewProjection_.eye.y = 30.0f;
 			viewProjection_.target.x = player_->GetWorldTransform().translation_.x * 0.5f;
@@ -96,6 +98,11 @@ void GameScene::Update() {
 			viewProjection_.target.x = 0.0f;
 			viewProjection_.target.z = 0.0f;
 			viewProjection_.eye.y = 10.0f;
+		}
+
+		//Rキーでタイトルへ
+		if (input_->PushKey(DIK_R)) {
+			scene = title;
 		}
 
 		viewProjection_.target.y = 0.0f;

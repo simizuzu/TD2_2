@@ -36,9 +36,9 @@ private:
 	std::unique_ptr<Model> model_;
 
 	//シェイク時の移動距離
-	float shakeVal = 1.000f;
+	float shakeVal;
 	//登場時の経過時間
-	float appearTimer = 0.0f;
+	float appearTimer;
 
 
 };

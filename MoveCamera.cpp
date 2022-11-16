@@ -1,8 +1,12 @@
 #include "MoveCamera.h"
-#include "Easing.h"
 
 void MoveCamera::Initialize() {
 
+	input_ = Input::GetInstance();
+
+	flame1 = 0.0f;
+	flame2 = 0.0f;
+	flame3 = 0.0f;
 }
 
 void MoveCamera::Appear(ViewProjection* viewProjection, Enemy* enemy) {
@@ -40,8 +44,8 @@ void MoveCamera::Appear(ViewProjection* viewProjection, Enemy* enemy) {
 	viewProjection->eye.x -= easeInOutSine(flame2 / MAX_FLAME) * (viewProjection->eye.x + 10.0f);
 	viewProjection->target.x += easeInOutSine(flame2 / MAX_FLAME) * (viewProjection->target.x + 10.0f);
 	//ƒJƒƒ‰ˆÚ“®3‰ñ–Ú
-	viewProjection->eye.x -= easeInOutSine(flame3 / MAX_FLAME) * (viewProjection->eye.x +  0.0f);
-	viewProjection->eye.y += easeInOutSine(flame3 / MAX_FLAME) * (viewProjection->eye.y + 10.0f);
-	viewProjection->eye.z -= easeInOutSine(flame3 / MAX_FLAME) * (viewProjection->eye.z + 120.0f);
-	viewProjection->target.x -= easeInOutSine(flame3 / MAX_FLAME) * (viewProjection->target.x + 0.0f);
+	viewProjection->eye.x -= easeOutSine(flame3 / MAX_FLAME) * (viewProjection->eye.x +  0.0f);
+	viewProjection->eye.y += easeOutSine(flame3 / MAX_FLAME) * (viewProjection->eye.y + 10.0f);
+	viewProjection->eye.z -= easeOutSine(flame3 / MAX_FLAME) * (viewProjection->eye.z + 120.0f);
+	viewProjection->target.x -= easeOutSine(flame3 / MAX_FLAME) * (viewProjection->target.x + 0.0f);
 }

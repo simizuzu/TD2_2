@@ -26,6 +26,8 @@ public:
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 
 private:
+	const float PI = 3.14159f;
+
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	// モデル
@@ -33,5 +35,6 @@ private:
 	
 	Input* input_ = nullptr;
 
-	float radian = 0.0f;
+	//ラジアン
+	float radian;
 };
