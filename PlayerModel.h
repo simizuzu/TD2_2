@@ -4,6 +4,7 @@
 #include "Affine.h"
 #include "Input.h"
 #include "PlayerBullet.h"
+#include "PlayerBits.h"
 
 class PlayerModel
 {
@@ -30,6 +31,8 @@ public:
 
 	const std::list < std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }
 
+	const std::list < std::unique_ptr<PlayerBits>>& GetBits() { return bits_; }
+
 private:
 	const float PI = 3.14159f;
 
@@ -45,6 +48,11 @@ private:
 
 	Vector3 playerPos;
 
+	Vector3 frontV;
+	Vector3 sideV;
+
 	//’e
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;
+
+	std::list<std::unique_ptr<PlayerBits>> bits_;
 };

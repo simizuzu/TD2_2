@@ -20,10 +20,17 @@ void PlayerModel::Initialize()
 	worldTransform_.TransferMatrix();
 
 	model_.reset(Model::CreateFromOBJ("Player", true));
+
+	std::unique_ptr<PlayerBits> newBit = std::make_unique<PlayerBits>();
+	newBit->Initilize(worldTransform_.translation_);
+
+	bits_.push_back(std::move(newBit));
+	
 }
 
 void PlayerModel::Update()
 {
+
 	//ƒL[“ü—Í‚ÅˆÚ“®
 	if (input_->PushKey(DIK_A)) {
 		radian += 0.003f;
@@ -67,6 +74,14 @@ void PlayerModel::Update()
 		bullet->Update(worldTransform_);
 	}
 
+	frontV = {worldTransform_.translation_.x - -sin(PI * radian) * 100.0f, worldTransform_.translation_.y - 0,worldTransform_.translation_.z - -cos(PI * radian) * 100.0f };
+
+	sideV = { frontV.z,0,frontV.x };
+
+	for (std::unique_ptr<PlayerBits>& bit : bits_) {
+		bit->Update(worldTransform_,frontV);
+	}
+
 }
 
 void PlayerModel::Draw(ViewProjection* viewProjection)
@@ -77,6 +92,9 @@ void PlayerModel::Draw(ViewProjection* viewProjection)
 		bullet->Draw(viewProjection);
 	}
 
+	for (std::unique_ptr<PlayerBits>& bit : bits_) {
+		bit->Draw(viewProjection);
+	}
 }
 
 void PlayerModel::Attack() {

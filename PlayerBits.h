@@ -5,10 +5,7 @@
 #include "Input.h"
 #include "MathMatrix.h"
 
-/// <summary>
-/// 自キャラの弾
-/// </summary>
-class PlayerBullet
+class PlayerBits
 {
 public:
 	/// <summary>
@@ -16,13 +13,12 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="position">初期座標</param>
-	//void Initilize(Model* model, const Vector3& position, const Vector3& velocity);
-	void Initilize(const Vector3& position, const Vector3& velocity);
+	void Initilize(const Vector3& position);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update(WorldTransform worldTransform);
+	void Update(WorldTransform worldTransform, Vector3 V);
 
 	/// <summary>
 	/// 描画
@@ -32,17 +28,11 @@ public:
 
 	bool IsDead() const { return isDead_; }
 
-	Vector3 BulletPos() const { return worldTransformBullet_.translation_; }
-
-	Vector3 GetWorldPos();
-
-	void OnCollision();
-
 private:
 	//ワールド変換データ
-	WorldTransform worldTransformBullet_;
+	WorldTransform worldTransformBit[6];
 
-	Vector3 worldTransformBulletPos_;
+	int bitMax = 6;
 
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
@@ -50,14 +40,9 @@ private:
 	// モデル
 	std::unique_ptr<Model> model_;
 
-	//速度
-	Vector3 velocity_;
+	const float PI = 3.14159f;
 
-	//寿命<frm>
-	static const int32_t kLifeTime = 60 * 5;
-
-	//デスタイマー
-	int32_t deathTimer_ = kLifeTime;
+	float rotaSpeed = 0;
 
 	//デスフラグ
 	bool isDead_ = false;
