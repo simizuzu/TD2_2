@@ -4,7 +4,11 @@
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() {
+	delete player_;
+	delete enemy_;
+	delete skydome_;
+}
 
 void GameScene::Initialize() {
 
