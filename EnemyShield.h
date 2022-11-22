@@ -6,7 +6,7 @@
 class EnemyShield
 {
 public:
-	void Initialize();
+	void Initialize(Model* model);
 
 	void Update();
 
@@ -32,7 +32,7 @@ private:
 	//ワールド変換データ
 	WorldTransform worldTransform_[SHIELD_MODEL];
 	//モデル
-	std::unique_ptr<Model> model_[SHIELD_MODEL];
+	Model* model_[SHIELD_MODEL];
 
 	//シールドHPの最大値
 	static const int SHIELD_HP_MAX = 15;

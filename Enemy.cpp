@@ -5,11 +5,11 @@ void Enemy::Initialize()
 {
 	input_ = Input::GetInstance();
 
-	enemyHP = MAX_HP;
-	//シェイク時の移動距離
+	//変数群初期化
+	enemyHP = maxHP;
 	shakeVal = 0.500f;
-	//登場時の経過時間
 	appearTimer = 0.0f;
+	defeatTimer = 0.0f;
 
 	//ワールド変換データの初期化
 	worldTransform_.Initialize();
@@ -27,34 +27,113 @@ void Enemy::Initialize()
 	worldTransform_.TransferMatrix();
 	//モデル初期化
 	model_.reset(Model::CreateFromOBJ("Enemy", true));
+	shieldModel_ = Model::CreateFromOBJ("Enemy", true);
+	bulletModel_ = Model::CreateFromOBJ("Enemy", true);
 
 	//シールド初期化
-	shield_.Initialize();
+	shield_.Initialize(shieldModel_);
 }
 
 void Enemy::Update()
 {
+	CheckCollision();
+
 	if (input_->TriggerKey(DIK_S) && shield_.GetShieldHP2() <= 0) {
 		enemyHP--;
 	}
 
 	//発射タイマーカウントダウン
 	fireTimer--;
+	//フェイズタイマー
+	phaseTimer++;
 
-	//指定時間に達した
-	if (fireTimer <= 0 && shield_.GetShieldHP2() > 0) {
-		//弾発射
-		Fire();
-		//発射タイマーを初期化
-		fireTimer = kFireInterval;
+	if (shield_.GetShieldHP2() > 0) {
+		switch (phase_)
+		{
+		case Phase::rest:
+			Shake();
+
+			//体力1/4以下で発狂
+			if (enemyHP <= maxHP / 4)
+			{
+				phase_ = Phase::craziness;
+			} 
+			else 
+			{
+				//数秒経ったら次のフェイズへ
+				if (phaseTimer >= restTimer) {
+					if (phaseNumber == 0) {
+						phase_ = Phase::wholeAttack;
+						phaseNumber = 1;
+					}
+					else {
+						phase_ = Phase::pRelianceAttack;
+						phaseNumber = 0;
+					}
+
+					phaseTimer = 0;
+				}
+			}
+
+
+			break;
+		case Phase::wholeAttack:
+	
+			//指定時間に達した
+			if (fireTimer <= 0 && shield_.GetShieldHP2() > 0) {
+				//弾発射
+				WholeFire();
+				//発射タイマーを初期化
+				fireTimer = kFireInterval;
+			}
+
+			//数秒経ったら次のフェイズへ
+			if (phaseTimer >= attackTimer) {
+				phase_ = Phase::rest;
+				phaseTimer = 0;
+			}
+			shakeVal = 1.0f;
+
+			break;
+		case Phase::pRelianceAttack:
+			//指定時間に達した
+			if (fireTimer <= 0 && shield_.GetShieldHP2() > 0) {
+				//弾発射
+				PRelianceFire();
+				//発射タイマーを初期化
+				fireTimer = kFireInterval;
+			}
+
+			//数秒経ったら次のフェイズへ
+			if (phaseTimer >= attackTimer) {
+				phase_ = Phase::rest;
+				phaseTimer = 0;
+			}
+			shakeVal = 1.0f;
+
+			break;
+		case Phase::craziness:
+			//指定時間に達した
+			if (fireTimer <= 0 && shield_.GetShieldHP2() > 0) {
+				//弾発射
+				PRelianceFire();
+				WholeFire();
+				//発射タイマーを初期化
+				fireTimer = kFireInterval;
+			}
+			break;
+		default:
+			break;
+		}
 	}
+
 
 	//復活前にシェイク
 	if (shield_.GetRevivalTimer() > 0 && shield_.GetRevivalTimer() <= 50) {
 		Shake();
 	}
 	else {
-		shakeVal = 1.0f;
+
 	}
 
 	//アフィン変換
@@ -73,33 +152,66 @@ void Enemy::Update()
 	shield_.Update();
 }
 
-//弾発射
-void Enemy::Fire()
+//弾発射(全方位弾)
+void Enemy::WholeFire()
 {
-	radian += 0.055f;
-	//ラジアンが2以上なら0に戻す
-	if (radian >= 20.0f) {
-		radian = 0.0f;
-	}
 
-	////自キャラのワールド座標を取得
+	//ラジアンが2以上なら0に戻す
+	if (radian >= 2.0f) {
+		radian = radianSpeed;
+	}
+	radian += radianSpeed;
+
+
+	//弾を生成し、初期化
+	for (int i = 0; i < bulletNum; i++) {
+		//速度設定
+		velocity = {
+		 sin(3.14f * (radian + (2.0f / bulletNum * i))),
+		 0.0f,
+		 cos(3.14f * (radian + (2.0f / bulletNum * i))),
+		};
+		//ベクトルの長さを、速さに合わせる
+		velocity *= kBulletSpeedA;
+
+		std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
+		newBullet->Initialize(bulletModel_, worldTransform_.translation_, velocity);
+
+		//弾を登録する
+		bullets_.push_back(std::move(newBullet));
+	}	
+}
+
+//弾発射(自機依存弾)
+void Enemy::PRelianceFire()
+{
+	//自キャラのワールド座標を取得
 	Vector3 velocity = {
-		sin(3.14f * radian),
-		0.0f,
-		cos(3.14f * radian),
+		player_->GetWorldTransform().matWorld_.m[3][0],
+		player_->GetWorldTransform().matWorld_.m[3][1],
+		player_->GetWorldTransform().matWorld_.m[3][2],
 	};
 
+	//敵キャラのワールド座標を取得
+	Vector3 enemyPos = {
+		GetWorldTransform().matWorld_.m[3][0],
+		GetWorldTransform().matWorld_.m[3][1],
+		GetWorldTransform().matWorld_.m[3][2],
+	};
+	//敵キャラ→自キャラの差分ベクトルを求める
+	velocity -= enemyPos;
+	//べクトルの正規化
+	velocity /= sqrt(pow(velocity.x, 2.0f) + pow(velocity.y, 2.0f) + pow(velocity.z, 2.0f));
 	//ベクトルの長さを、速さに合わせる
-	velocity *= kBulletSpeed;
+	velocity *= kBulletSpeedB;
 
 	//弾を生成し、初期化
 	std::unique_ptr<EnemyBullet> newBullet = std::make_unique<EnemyBullet>();
-	newBullet->Initialize(worldTransform_.translation_, velocity);
+	newBullet->Initialize(bulletModel_, worldTransform_.translation_, velocity);
 
 	//弾を登録する
 	bullets_.push_back(std::move(newBullet));
 }
-
 
 void Enemy::Draw(ViewProjection* viewProjection)
 {
@@ -154,17 +266,76 @@ void Enemy::AppearMove()
 }
 
 //撃破時の動き
-void Enemy::Defeat()
+void Enemy::DefeatMove()
 {
+	defeatTimer++;
 
+	//一定時間たったらシェイク量を少しづつ減らす
+	/*if (shakeVal > 0 && appearTimer >= 150.0f) {
+		shakeVal -= 0.01f;
+	}*/
+	if (defeatTimer < 150.0f) {
+		Shake();
+	}
+	else {
+		worldTransform_.translation_.y -= 1.0f;
+	}
+
+	//アフィン変換
+	Affine::CreateAffine(worldTransform_);
+	//行列更新
+	worldTransform_.TransferMatrix();
 }
 
 //シェイク
 void Enemy::Shake()
 {
 	worldTransform_.translation_ = { 0.0f,shakeVal,0.0f };
+	//アフィン変換
 	Affine::CreateAffine(worldTransform_);
+	//行列更新
+	worldTransform_.TransferMatrix();;
 
 	shakeVal = -shakeVal;
 
+}
+
+//敵弾とプレイヤーの当たり判定
+void Enemy::CheckCollision() 
+{
+	//判定対象AとBの座標
+	Vector3 posA, posB;
+
+	//敵弾リストの取得
+	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = bullets_;
+
+	//自キャラの座標
+	posA = { 
+		player_->GetWorldTransform().matWorld_.m[3][0],
+		player_->GetWorldTransform().matWorld_.m[3][1],
+		player_->GetWorldTransform().matWorld_.m[3][2],
+	};
+
+	//自キャラと敵弾全ての当たり判定
+	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
+		//敵弾の座標
+		posB = bullet->GetWorldPosition();
+
+		//座標AとBの距離を求める
+		float distance =
+			pow(posA.x - posB.x, 2.0f) + pow(posA.y - posB.y, 2.0f) + pow(posA.z - posB.z, 2.0f);
+
+		//当たり判定の半径を設定
+		float bulletRadian = 3.0f;
+		float playerRadian = 1.0f;
+
+		float collision = pow(bulletRadian + playerRadian, 2.0f);
+
+		//球と球の交差判定
+		if (distance <= collision) {
+			//敵弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+
+		}
+	}
 }

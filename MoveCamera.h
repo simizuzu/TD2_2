@@ -6,7 +6,6 @@
 //最大フレーム数
 static const float MAX_FLAME = 100.0f;
 
-
 static const float PI = 3.14159f;
 
 class MoveCamera
@@ -16,6 +15,8 @@ public:
 	void Initialize();
 	//登場時の処理
 	void Appear(ViewProjection* viewProjection, Enemy* enemy);
+	//撃破時の処理
+	void Defeat(ViewProjection* viewProjection,Vector3 eye, Enemy* enemy);
 
 	//ゲッター
 	float GetFlame3() { return flame3; }

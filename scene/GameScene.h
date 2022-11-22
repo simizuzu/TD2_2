@@ -18,7 +18,7 @@ enum Scene {
 	title,
 	appear,
 	game,
-	pause,
+	defeat,
 	gameover,
 	clear
 };
@@ -80,6 +80,8 @@ class GameScene {
 
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
+	//ビュープロジェクションの位置保存用
+	Vector3 viewProjectionPos;
 	//カメラの動き
 	MoveCamera moveCamera_;
 

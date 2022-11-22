@@ -1,7 +1,7 @@
 #include "MoveCamera.h"
 
-void MoveCamera::Initialize() {
-
+void MoveCamera::Initialize() 
+{
 	input_ = Input::GetInstance();
 
 	flame1 = 0.0f;
@@ -9,7 +9,9 @@ void MoveCamera::Initialize() {
 	flame3 = 0.0f;
 }
 
-void MoveCamera::Appear(ViewProjection* viewProjection, Enemy* enemy) {
+//登場時の処理
+void MoveCamera::Appear(ViewProjection* viewProjection, Enemy* enemy)
+{
 	//カメラ初期位置
 	viewProjection->eye.x = 10.0f;
 	viewProjection->eye.y = 0.0f;
@@ -45,7 +47,22 @@ void MoveCamera::Appear(ViewProjection* viewProjection, Enemy* enemy) {
 	viewProjection->target.x += easeInOutSine(flame2 / MAX_FLAME) * (viewProjection->target.x + 10.0f);
 	//カメラ移動3回目
 	viewProjection->eye.x -= easeOutSine(flame3 / MAX_FLAME) * (viewProjection->eye.x +  0.0f);
-	viewProjection->eye.y += easeOutSine(flame3 / MAX_FLAME) * (viewProjection->eye.y + 10.0f);
+	viewProjection->eye.y += easeOutSine(flame3 / MAX_FLAME) * (viewProjection->eye.y + 20.0f);
 	viewProjection->eye.z -= easeOutSine(flame3 / MAX_FLAME) * (viewProjection->eye.z + 120.0f);
 	viewProjection->target.x -= easeOutSine(flame3 / MAX_FLAME) * (viewProjection->target.x + 0.0f);
+}
+
+//撃破時の処理
+void MoveCamera::Defeat(ViewProjection* viewProjection, Vector3 eye, Enemy* enemy)
+{
+	//カメラ初期位置
+	viewProjection->eye = eye;
+
+	if (flame1 < MAX_FLAME) {
+		flame1++;
+	}
+
+	viewProjection->eye.z -= easeInOutSine(flame1 / MAX_FLAME) * (viewProjection->eye.z + 60.0f);
+	viewProjection->eye.y += easeInOutSine(flame1 / MAX_FLAME) * (viewProjection->eye.y - 30.0f);
+	viewProjection->eye.x -= easeInOutSine(flame1 / MAX_FLAME) * (viewProjection->eye.x + 0.0f);
 }

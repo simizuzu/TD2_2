@@ -26,13 +26,19 @@ public:
 	void AppearMove();
 
 	//退場時の動き
-	void Defeat();
+	void DefeatMove();
 
-	//弾発射
-	void Fire();
+	//弾発射(全方位弾)
+	void WholeFire();
+
+	//弾発射(自機依存弾)
+	void PRelianceFire();
 
 	//シェイク
 	void Shake();
+
+	//敵弾とプレイヤーの当たり判定
+	void CheckCollision();
 
 	//敵HPのゲッター
 	int GetEnemyHP() { return enemyHP; }
@@ -42,20 +48,33 @@ public:
 	//登場時の経過時間のゲッター
 	float GetAppearTimer() { return appearTimer; }
 
-	static const int MAX_HP = 100;
+	// setter
+	void SetPlayer(PlayerModel* player) { player_ = player; }
 
-	//// setter
-	//void SetPlayer(PlayerModel* player) { player_ = player; }
-
-	////自キャラ
-	//PlayerModel* player_ = nullptr;
+	//自キャラ
+	PlayerModel* player_ = nullptr;
 
 private:
+	//行動フェーズ
+	enum class Phase {
+		rest,			//休憩
+		wholeAttack,	//全方位攻撃
+		pRelianceAttack,//自機依存攻撃
+		craziness		//発狂攻撃
+	};
+
+	//フェーズ
+	Phase phase_ = Phase::rest;
+
 	Input* input_ = nullptr;
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 	//モデル
 	std::unique_ptr<Model> model_;
+	//シールドのモデル
+	Model* shieldModel_;
+	//弾のモデル
+	Model* bulletModel_;
 
 	//弾
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
@@ -63,23 +82,40 @@ private:
 	EnemyShield shield_;
 
 	//シェイク時の移動距離
-	float shakeVal;
+	float shakeVal = 0.500f;
 	//登場時の経過時間
-	float appearTimer;
+	float appearTimer = 0.0f;
+	//撃破時の経過時間
+	float defeatTimer = 0.0f;
 
 	//発射タイマー
 	int32_t fireTimer = 0;
 	//発射間隔
-	int kFireInterval = 5;
+	int kFireInterval = 30;
 
+	//敵本体の最大HP
+	const int maxHP = 10;
 	//敵本体のHP
-	int enemyHP = MAX_HP;
+	int enemyHP = maxHP;
 
 	//弾の速度
-	float kBulletSpeed = 0.5f;
+	float kBulletSpeedA = 0.5f;
+	float kBulletSpeedB = 1.5f;
 
 	//ラジアン
 	float radian = 0.0f;
+	const float radianSpeed = 0.05f;
+	//弾の速度
+	Vector3 velocity;
+	//一度に発射する弾の数
+	const int bulletNum = 10;
 
+	//フェーズ移行のタイマー
+	int phaseTimer = 0;
+	int phaseNumber = 0;
+	//休憩の時間
+	const int restTimer = 100;
+	//攻撃の時間
+	const int attackTimer = 500;
 };
 

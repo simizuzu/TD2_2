@@ -1,7 +1,7 @@
 #include "EnemyShield.h"
 #include "Affine.h"
 
-void EnemyShield::Initialize() {
+void EnemyShield::Initialize(Model* model) {
 	input_ = Input::GetInstance();
 
 	//変数初期化
@@ -16,6 +16,9 @@ void EnemyShield::Initialize() {
 	for (int i = 0; i < SHIELD_MODEL; i++) {
 		//ワールド変換データの初期化
 		worldTransform_[i].Initialize();
+
+		//モデル初期化
+		model_[i] = model;
 
 		//初期座標設定
 		if (i < SHIELD_MODEL_HALF) {
@@ -39,9 +42,6 @@ void EnemyShield::Initialize() {
 		//行列更新
 		worldTransform_[i].TransferMatrix();
 
-		//モデル初期化
-		//model_[i].reset(Model::CreateFromOBJ("Player", true));
-		model_[i].reset(Model::CreateFromOBJ("Enemy", true));
 	}
 
 }

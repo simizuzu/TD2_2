@@ -24,6 +24,9 @@ void GameScene::Initialize() {
 	enemy_ = new Enemy();
 	enemy_->Initialize();
 
+	//敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_);
+
 	//天球の生成
 	skydome_ = new Skydome();
 	//天球の初期化
@@ -76,17 +79,11 @@ void GameScene::Update() {
 		break;
 
 	case game:
-
 		player_->Update();
 		enemy_->Update();
 
 		viewProjection_.eye.x = player_->GetWorldTransform().translation_.x * 1.5f;
 		viewProjection_.eye.z = player_->GetWorldTransform().translation_.z * 1.5f;
-
-		debugText_->SetPos(20.0f, 20.0f);
-		debugText_->Printf("%f,%f,%f", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
-		debugText_->SetPos(20.0f, 40.0f);
-		debugText_->Printf("%f,%f,%f", viewProjection_.target.x, viewProjection_.target.y, viewProjection_.target.z);
 
 		//Wキーで視点変更
 		if (input_->PushKey(DIK_W)) {
@@ -97,7 +94,7 @@ void GameScene::Update() {
 		else {
 			viewProjection_.target.x = 0.0f;
 			viewProjection_.target.z = 0.0f;
-			viewProjection_.eye.y = 10.0f;
+			viewProjection_.eye.y = 20.0f;
 		}
 
 		//Rキーでタイトルへ
@@ -105,10 +102,35 @@ void GameScene::Update() {
 			scene = title;
 		}
 
+		//ボスを倒したらシーンチェンジ
+		if (enemy_->GetEnemyHP() <= 0) {
+			moveCamera_.Initialize();
+			scene = defeat;
+		}
+
 		viewProjection_.target.y = 0.0f;
+
+		//ビュープロジェクションの位置を保存
+		viewProjectionPos = viewProjection_.eye;
+
+		debugText_->SetPos(20.0f, 20.0f);
+		debugText_->Printf("%f,%f,%f", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
+		debugText_->SetPos(20.0f, 40.0f);
+		debugText_->Printf("%f,%f,%f", viewProjection_.target.x, viewProjection_.target.y, viewProjection_.target.z);
+		debugText_->SetPos(20.0f, 80.0f);
+		debugText_->Printf("%d", enemy_->GetEnemyHP());
 		break;
 
-	case pause:
+	case defeat:
+		//enemy_->Update();
+		enemy_->DefeatMove();
+
+		moveCamera_.Defeat(&viewProjection_,viewProjectionPos, enemy_);
+
+		//Rキーでタイトルへ
+		if (input_->PushKey(DIK_R)) {
+			scene = title;
+		}
 		break;
 
 	}
@@ -160,7 +182,9 @@ void GameScene::Draw() {
 		enemy_->Draw(&viewProjection_);
 		break;
 
-	case pause:
+	case defeat:
+		player_->Draw(&viewProjection_);
+		enemy_->Draw(&viewProjection_);
 		break;
 
 	}
