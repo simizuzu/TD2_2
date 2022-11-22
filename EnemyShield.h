@@ -12,6 +12,8 @@ public:
 
 	void Draw(const ViewProjection& viewProjection);
 
+	void OnCollision();
+
 	//敵シールドHPのゲッター
 	int GetShieldHP1() { return shieldHP1; }
 	int GetShieldHP2() { return shieldHP2; }

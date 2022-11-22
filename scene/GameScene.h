@@ -55,6 +55,9 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	//当たり判定
+	void CheckCollision();
+
 	//自機
 	PlayerModel* player_ = nullptr;
 

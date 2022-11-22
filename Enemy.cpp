@@ -1,6 +1,13 @@
 #include "Enemy.h"
 #include "Affine.h"
 
+Enemy::~Enemy()
+{
+	delete player_;
+	delete shieldModel_;
+	delete bulletModel_;
+}
+
 void Enemy::Initialize()
 {
 	input_ = Input::GetInstance();
@@ -10,6 +17,9 @@ void Enemy::Initialize()
 	shakeVal = 0.500f;
 	appearTimer = 0.0f;
 	defeatTimer = 0.0f;
+	phaseTimer = 0;
+	phaseNumber = 0;
+	phase_ = Phase::rest;
 
 	//ワールド変換データの初期化
 	worldTransform_.Initialize();
@@ -36,12 +46,6 @@ void Enemy::Initialize()
 
 void Enemy::Update()
 {
-	CheckCollision();
-
-	if (input_->TriggerKey(DIK_S) && shield_.GetShieldHP2() <= 0) {
-		enemyHP--;
-	}
-
 	//発射タイマーカウントダウン
 	fireTimer--;
 	//フェイズタイマー
@@ -228,6 +232,13 @@ void Enemy::Draw(ViewProjection* viewProjection)
 //登場時の動き
 void Enemy::AppearMove()
 {
+	//弾を消す
+	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
+		bullet->BulletDeath();
+	}
+	//デスフラグの立った弾を削除
+	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) { return bullet->GetIsDead(); });
+
 	if (input_->PushKey(DIK_SPACE)) {
 		worldTransform_.translation_ = { 0.0f,0.0f,0.0f };
 		//アフィン変換
@@ -254,15 +265,12 @@ void Enemy::AppearMove()
 		}
 
 		Shake();
+		
 	}
 
 	//行列更新
 	worldTransform_.TransferMatrix();
 
-	//弾更新
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) {
-		bullet->Update();
-	}
 }
 
 //撃破時の動き
@@ -294,48 +302,18 @@ void Enemy::Shake()
 	//アフィン変換
 	Affine::CreateAffine(worldTransform_);
 	//行列更新
-	worldTransform_.TransferMatrix();;
+	worldTransform_.TransferMatrix();
 
 	shakeVal = -shakeVal;
 
 }
 
-//敵弾とプレイヤーの当たり判定
-void Enemy::CheckCollision()
+void Enemy::OnCollision()
 {
-	//判定対象AとBの座標
-	Vector3 posA, posB;
-
-	//敵弾リストの取得
-	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = bullets_;
-
-	//自キャラの座標
-	posA = {
-		player_->GetWorldTransform().matWorld_.m[3][0],
-		player_->GetWorldTransform().matWorld_.m[3][1],
-		player_->GetWorldTransform().matWorld_.m[3][2],
-	};
-
-	//自キャラと敵弾全ての当たり判定
-	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
-		//敵弾の座標
-		posB = bullet->GetWorldPosition();
-
-		//座標AとBの距離を求める
-		float distance =
-			pow(posA.x - posB.x, 2.0f) + pow(posA.y - posB.y, 2.0f) + pow(posA.z - posB.z, 2.0f);
-
-		//当たり判定の半径を設定
-		float bulletRadian = 3.0f;
-		float playerRadian = 1.0f;
-
-		float collision = pow(bulletRadian + playerRadian, 2.0f);
-
-		//球と球の交差判定
-		if (distance <= collision) {
-			//敵弾の衝突時コールバックを呼び出す
-			bullet->OnCollision();
-
-		}
+	if (shield_.GetShieldHP2() <= 0) {
+		enemyHP--;
+	}
+	else {
+		shield_.OnCollision();
 	}
 }

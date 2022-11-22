@@ -48,20 +48,6 @@ void EnemyShield::Initialize(Model* model) {
 
 void EnemyShield::Update() {
 
-	//キー入力でHP変動
-	if (input_->TriggerKey(DIK_S)) {
-		if (shieldHP1 >= 0) {
-			shieldHP1--;
-		}
-		else if (shieldHP2 >= 0) {
-			shieldHP2--;
-		}
-	}
-	/*if (input_->TriggerKey(DIK_X)) {
-		shieldHP1 = SHIELD_HP_MAX;
-		shieldHP2 = SHIELD_HP_MAX;
-	}*/
-
 	//シールドのHPが0になったら距離を離す
 	if (shieldHP1 <= 0 && distance1 <= DISTANCE_MIN * 10.0f) {
 		distance1 += removeSpeed;
@@ -140,5 +126,16 @@ void EnemyShield::Update() {
 void EnemyShield::Draw(const ViewProjection& viewProjection) {
 	for (int i = 0; i < SHIELD_MODEL; i++) {
 		model_[i]->Draw(worldTransform_[i], viewProjection);
+	}
+}
+
+void EnemyShield::OnCollision()
+{
+	//ヒットしたらシールドの体力を削る
+	if (shieldHP1 >= 0) {
+		shieldHP1--;
+	}
+	else if (shieldHP2 >= 0) {
+		shieldHP2--;
 	}
 }

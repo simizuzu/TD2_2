@@ -86,20 +86,16 @@ void GameScene::Update() {
 		player_->Update();
 		enemy_->Update();
 
-		viewProjection_.eye.x = player_->GetWorldTransform().translation_.x * 1.5f;
-		viewProjection_.eye.z = player_->GetWorldTransform().translation_.z * 1.5f;
+		//当たり判定
+		CheckCollision();
 
-		//Wキーで視点変更
-		if (input_->PushKey(DIK_W)) {
-			viewProjection_.eye.y = 30.0f;
-			viewProjection_.target.x = player_->GetWorldTransform().translation_.x * 0.5f;
-			viewProjection_.target.z = player_->GetWorldTransform().translation_.z * 0.5f;
-		}
-		else {
-			viewProjection_.target.x = 0.0f;
-			viewProjection_.target.z = 0.0f;
-			viewProjection_.eye.y = 20.0f;
-		}
+		//カメラの位置
+		viewProjection_.eye.x = player_->GetWorldTransform().translation_.x * 1.5f;
+		viewProjection_.eye.y = 20.0f;
+		viewProjection_.eye.z = player_->GetWorldTransform().translation_.z * 1.5f;
+		viewProjection_.target.x = 0.0f;
+		viewProjection_.target.y = 0.0f;
+		viewProjection_.target.z = 0.0f;
 
 		//Rキーでタイトルへ
 		if (input_->PushKey(DIK_R)) {
@@ -111,8 +107,6 @@ void GameScene::Update() {
 			moveCamera_.Initialize();
 			scene = defeat;
 		}
-
-		viewProjection_.target.y = 0.0f;
 
 		//ビュープロジェクションの位置を保存
 		viewProjectionPos = viewProjection_.eye;
@@ -126,13 +120,12 @@ void GameScene::Update() {
 		break;
 
 	case defeat:
-		//enemy_->Update();
 		enemy_->DefeatMove();
 
 		moveCamera_.Defeat(&viewProjection_, viewProjectionPos, enemy_);
 
-		//Rキーでタイトルへ
-		if (input_->PushKey(DIK_R)) {
+		//SPACEキーでタイトルへ
+		if (input_->TriggerKey(DIK_SPACE)) {
 			scene = title;
 		}
 		break;
@@ -215,3 +208,77 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
+
+void GameScene::CheckCollision()
+{
+	//判定対象AとBの座標
+	Vector3 posA, posB;
+
+	//敵弾リストの取得
+	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy_->GetBullets();
+	//自弾リストの取得
+	const std::list<std::unique_ptr<PlayerBullet>>& playerBullets = player_->GetBullets();
+
+	/*敵弾とプレイヤーの当たり判定*/
+	//自キャラの座標
+	posA = {
+		player_->GetWorldTransform().matWorld_.m[3][0],
+		player_->GetWorldTransform().matWorld_.m[3][1],
+		player_->GetWorldTransform().matWorld_.m[3][2],
+	};
+
+	//自キャラと敵弾全ての当たり判定
+	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {
+		//敵弾の座標
+		posB = bullet->GetWorldPosition();
+
+		//座標AとBの距離を求める
+		float distance =
+			pow(posA.x - posB.x, 2.0f) + pow(posA.y - posB.y, 2.0f) + pow(posA.z - posB.z, 2.0f);
+
+		//当たり判定の半径を設定
+		float bulletRadian = 3.0f;
+		float playerRadian = 1.0f;
+
+		float collision = pow(bulletRadian + playerRadian, 2.0f);
+
+		//球と球の交差判定
+		if (distance <= collision) {
+			//敵弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+			player_->OnCollision();
+		}
+	}
+
+	/*自弾と敵の当たり判定*/
+	//敵キャラの座標
+	posA = {
+		enemy_->GetWorldTransform().matWorld_.m[3][0],
+		enemy_->GetWorldTransform().matWorld_.m[3][1],
+		enemy_->GetWorldTransform().matWorld_.m[3][2],
+	};
+
+	//敵キャラと自弾全ての当たり判定
+	for (const std::unique_ptr<PlayerBullet>& bullet : playerBullets) {
+		//自弾の座標
+		posB = bullet->GetWorldPos();
+
+		//座標AとBの距離を求める
+		float distance =
+			pow(posA.x - posB.x, 2.0f) + pow(posA.y - posB.y, 2.0f) + pow(posA.z - posB.z, 2.0f);
+
+		//当たり判定の半径を設定
+		float bulletRadian = 0.1f;
+		float enemyRadian = 5.0f;
+
+		float collision = pow(bulletRadian + enemyRadian, 2.0f);
+
+		//球と球の交差判定
+		if (distance <= collision) {
+			//自弾の衝突時コールバックを呼び出す
+			bullet->OnCollision();
+			enemy_->OnCollision();
+		}
+	}
+}
+

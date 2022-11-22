@@ -3,6 +3,7 @@
 #include "WorldTransform.h"
 #include "Input.h"
 #include "PlayerModel.h"
+#include "PlayerBullet.h"
 #include "EnemyBullet.h"
 #include "EnemyShield.h"
 #include <list>
@@ -13,6 +14,9 @@ static const float SHAKE_START = 50.0f;
 class Enemy
 {
 public:
+	//デストラクタ
+	~Enemy();
+
 	//初期化
 	void Initialize();
 
@@ -37,8 +41,8 @@ public:
 	//シェイク
 	void Shake();
 
-	//敵弾とプレイヤーの当たり判定
-	void CheckCollision();
+	//ヒット判定
+	void OnCollision();
 
 	//敵HPのゲッター
 	int GetEnemyHP() { return enemyHP; }
@@ -48,11 +52,11 @@ public:
 	//登場時の経過時間のゲッター
 	float GetAppearTimer() { return appearTimer; }
 
+	//弾リストを取得
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
+
 	// setter
 	void SetPlayer(PlayerModel* player) { player_ = player; }
-
-	//自キャラ
-	PlayerModel* player_ = nullptr;
 
 private:
 	//行動フェーズ
@@ -80,6 +84,8 @@ private:
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 	//シールド
 	EnemyShield shield_;
+	//自キャラ
+	PlayerModel* player_ = nullptr;
 
 	//シェイク時の移動距離
 	float shakeVal = 0.500f;

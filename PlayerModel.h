@@ -26,6 +26,9 @@ public:
 
 	void Attack();
 
+	//ヒット判定
+	void OnCollision() { playerHp--; }
+
 	//ワールド行列のゲッター
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 
