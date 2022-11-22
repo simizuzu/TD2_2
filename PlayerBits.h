@@ -18,7 +18,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update(WorldTransform worldTransform, Vector3 V);
+	void Update(WorldTransform worldTransform,Vector3 V, float Hp);
 
 	/// <summary>
 	/// 描画
@@ -32,7 +32,9 @@ private:
 	//ワールド変換データ
 	WorldTransform worldTransformBit[6];
 
-	int bitMax = 6;
+	//int bitMax = 6;
+
+	float bitMax = 6;
 
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;

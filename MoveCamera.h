@@ -16,7 +16,7 @@ public:
 	//“oê‚Ìˆ—
 	void Appear(ViewProjection* viewProjection, Enemy* enemy);
 	//Œ‚”j‚Ìˆ—
-	void Defeat(ViewProjection* viewProjection,Vector3 eye, Enemy* enemy);
+	void Defeat(ViewProjection* viewProjection, Vector3 eye, Enemy* enemy);
 
 	//ƒQƒbƒ^[
 	float GetFlame3() { return flame3; }
@@ -26,7 +26,7 @@ public:
 		return 1 - pow(1 - number, 3);
 		//return sin((number * PI) / 2);
 	}
-	
+
 	float easeInOutSine(float number) {
 		return -(cos(PI * number) - 1) / 2;
 		//return sin((number * PI) / 2);

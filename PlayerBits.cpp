@@ -2,7 +2,6 @@
 #include <cassert>
 
 void PlayerBits::Initilize(const Vector3& position) {
-	//model_ = Model::Create();
 
 	//テクスチャ読み込み
 	model_.reset(Model::CreateFromOBJ("Heart", true));
@@ -18,7 +17,9 @@ void PlayerBits::Initilize(const Vector3& position) {
 
 }
 
-void PlayerBits::Update(WorldTransform worldTransform,Vector3 V) {
+void PlayerBits::Update(WorldTransform worldTransform,Vector3 V, float Hp) {
+
+	bitMax = Hp;
 
 	rotaSpeed -= 0.01;
 

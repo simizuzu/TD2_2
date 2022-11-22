@@ -2,7 +2,6 @@
 #include <cassert>
 
 void PlayerBullet::Initilize(const Vector3& position, const Vector3& velocity) {
-	//model_ = Model::Create();
 
 	//テクスチャ読み込み
 	model_.reset(Model::CreateFromOBJ("Player", true));
@@ -11,7 +10,6 @@ void PlayerBullet::Initilize(const Vector3& position, const Vector3& velocity) {
 	worldTransformBullet_.rotation_ = { 0.0f, 0.0f, 0.0f };
 
 	worldTransformBullet_.translation_ = position;
-	//worldTransformBullet_.translation_.y += 3.0f;
 
 	worldTransformBullet_.scale_ = { 0.1, 0.1, 0.1 };
 

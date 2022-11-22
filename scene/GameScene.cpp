@@ -125,7 +125,7 @@ void GameScene::Update() {
 		//enemy_->Update();
 		enemy_->DefeatMove();
 
-		moveCamera_.Defeat(&viewProjection_,viewProjectionPos, enemy_);
+		moveCamera_.Defeat(&viewProjection_, viewProjectionPos, enemy_);
 
 		//Rキーでタイトルへ
 		if (input_->PushKey(DIK_R)) {

@@ -39,6 +39,22 @@ void PlayerModel::Update()
 		radian -= 0.003f;
 	}
 
+	if (input_->PushKey(DIK_H) && isTimer == false)
+	{
+		isTimer = TRUE;
+		playerHp -= 1;
+	}
+
+	if (isTimer == TRUE)
+	{
+		damegeTimer++;
+		if (damegeTimer > 30)
+		{
+			damegeTimer = 0;
+			isTimer = false;
+		}
+	}
+
 	//ÉâÉWÉAÉìÇ™2à»è„Ç»ÇÁ0Ç…ñﬂÇ∑
 	if (radian >= 2.0f) {
 		radian = 0.0f;
@@ -79,7 +95,7 @@ void PlayerModel::Update()
 	sideV = { frontV.z,0,frontV.x };
 
 	for (std::unique_ptr<PlayerBits>& bit : bits_) {
-		bit->Update(worldTransform_,frontV);
+		bit->Update(worldTransform_, frontV,playerHp);
 	}
 
 }
@@ -100,6 +116,8 @@ void PlayerModel::Draw(ViewProjection* viewProjection)
 void PlayerModel::Attack() {
 	if (input_->PushKey(DIK_SPACE)) {
 
+		bulletTimer++;
+
 		playerPos = worldTransform_.translation_;
 
 		//íeÇÃë¨ìx
@@ -107,11 +125,16 @@ void PlayerModel::Attack() {
 		Vector3 velocity(kBulletSpeed * sinf(worldTransform_.rotation_.y), 0, kBulletSpeed * cosf(worldTransform_.rotation_.y));
 
 		//íeê∂ê¨ÇµÅAèâä˙âª
-		std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initilize(playerPos, velocity);
+		if (bulletTimer == bulletTimerMax)
+		{
+			std::unique_ptr<PlayerBullet> newBullet = std::make_unique<PlayerBullet>();
+			newBullet->Initilize(playerPos, velocity);
 
-		//íeÇìoò^Ç∑ÇÈ
-		bullets_.push_back(std::move(newBullet));
+			//íeÇìoò^Ç∑ÇÈ
+			bullets_.push_back(std::move(newBullet));
+
+			bulletTimer = 0;
+		}
 
 	}
 }

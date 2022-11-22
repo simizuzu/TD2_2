@@ -29,6 +29,8 @@ public:
 	//ワールド行列のゲッター
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 
+	float GetPlayerHp() { return playerHp; }
+
 	const std::list < std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }
 
 	const std::list < std::unique_ptr<PlayerBits>>& GetBits() { return bits_; }
@@ -50,6 +52,15 @@ private:
 
 	Vector3 frontV;
 	Vector3 sideV;
+
+	float bulletTimer = 0;
+	float bulletTimerMax = 10;
+
+	float playerHp = 6;
+
+	float damegeTimer = 0;
+
+	bool isTimer = false;
 
 	//弾
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;

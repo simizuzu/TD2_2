@@ -57,8 +57,8 @@ void Enemy::Update()
 			if (enemyHP <= maxHP / 4)
 			{
 				phase_ = Phase::craziness;
-			} 
-			else 
+			}
+			else
 			{
 				//数秒経ったら次のフェイズへ
 				if (phaseTimer >= restTimer) {
@@ -78,7 +78,7 @@ void Enemy::Update()
 
 			break;
 		case Phase::wholeAttack:
-	
+
 			//指定時間に達した
 			if (fireTimer <= 0 && shield_.GetShieldHP2() > 0) {
 				//弾発射
@@ -179,7 +179,7 @@ void Enemy::WholeFire()
 
 		//弾を登録する
 		bullets_.push_back(std::move(newBullet));
-	}	
+	}
 }
 
 //弾発射(自機依存弾)
@@ -301,7 +301,7 @@ void Enemy::Shake()
 }
 
 //敵弾とプレイヤーの当たり判定
-void Enemy::CheckCollision() 
+void Enemy::CheckCollision()
 {
 	//判定対象AとBの座標
 	Vector3 posA, posB;
@@ -310,7 +310,7 @@ void Enemy::CheckCollision()
 	const std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = bullets_;
 
 	//自キャラの座標
-	posA = { 
+	posA = {
 		player_->GetWorldTransform().matWorld_.m[3][0],
 		player_->GetWorldTransform().matWorld_.m[3][1],
 		player_->GetWorldTransform().matWorld_.m[3][2],
