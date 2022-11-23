@@ -26,6 +26,8 @@ void PlayerModel::Initialize()
 
 	bits_.push_back(std::move(newBit));
 	
+	playerHp = 6;
+
 }
 
 void PlayerModel::Update()
