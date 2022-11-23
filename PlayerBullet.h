@@ -22,7 +22,7 @@ public:
 	/// <summary>
 	/// XV
 	/// </summary>
-	void Update(WorldTransform worldTransform);
+	void Update(WorldTransform worldTransform, float hp);
 
 	/// <summary>
 	/// •`‰æ

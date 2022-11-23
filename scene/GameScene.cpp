@@ -122,6 +122,7 @@ void GameScene::Update() {
 		break;
 
 	case defeat:
+		player_->Dead();
 		enemy_->DefeatMove();
 
 		moveCamera_.Defeat(&viewProjection_, viewProjectionPos, enemy_);
@@ -139,6 +140,7 @@ void GameScene::Update() {
 		break;
 
 	case gameover:
+		player_->Dead();
 		if (input_->TriggerKey(DIK_SPACE)) {
 			scene = title;
 		}

@@ -21,9 +21,11 @@ void PlayerBits::Update(WorldTransform worldTransform,Vector3 V, float Hp) {
 
 	bitMax = Hp;
 
-	rotaSpeed -= 0.01;
-
 	float r = 6.0f;
+
+	if (--bitMax <= 0) {
+		isDead_ = true;
+	}
 
 	for (int i = 0; i < bitMax; i++)
 	{
@@ -51,24 +53,7 @@ void PlayerBits::Update(WorldTransform worldTransform,Vector3 V, float Hp) {
 		worldTransformBit[5].translation_.y -= r;
 		worldTransformBit[5].translation_.z += V.x * 0.2f;
 
-		//Œ³
-		/*worldTransformBit[0].translation_.y += r * 1.5f;
-
-		worldTransformBit[1].translation_.x += V.z * 0.5f;
-		worldTransformBit[1].translation_.y -= r;
-		worldTransformBit[1].translation_.z -= V.x * 0.5f;
-
-		worldTransformBit[2].translation_.x -= V.z * 0.5f;
-		worldTransformBit[2].translation_.y -= r;
-		worldTransformBit[2].translation_.z += V.x * 0.5f;*/
-
 		worldTransformBit[i].rotation_ = worldTransform.rotation_;
-
-		worldTransformBit[i].rotation_.z = PI * rotaSpeed * 1.5f;
-
-		/*worldTransformBit[0].rotation_.z = PI * rotaSpeed * 1.5f;
-		worldTransformBit[1].rotation_.z = PI * rotaSpeed * 1.0f;
-		worldTransformBit[2].rotation_.z = PI * rotaSpeed * 0.5f;*/
 
 		worldTransformBit[i].matWorld_ = MathUtility::Matrix4Identity();
 

@@ -83,13 +83,14 @@ void PlayerModel::Update()
 
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) { return bullet->IsDead(); });
+	bits_.remove_if([](std::unique_ptr<PlayerBits>& bits) { return bits->IsDead(); });
 
 	//キャラクター攻撃処理
 	Attack();
 
 	//弾更新
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
-		bullet->Update(worldTransform_);
+		bullet->Update(worldTransform_,playerHp);
 	}
 
 	frontV = {worldTransform_.translation_.x - -sin(PI * radian) * 100.0f, worldTransform_.translation_.y - 0,worldTransform_.translation_.z - -cos(PI * radian) * 100.0f };

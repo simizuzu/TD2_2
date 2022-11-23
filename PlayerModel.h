@@ -29,6 +29,11 @@ public:
 	//ヒット判定
 	void OnCollision() { playerHp--; }
 
+	float Dead()
+	{
+		return playerHp = 0;
+	}
+
 	//ワールド行列のゲッター
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 
