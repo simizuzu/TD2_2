@@ -100,7 +100,7 @@ private:
 	int kFireInterval = 30;
 
 	//УGЦ{СћВћН≈СеHP
-	const int maxHP = 100;
+	const int maxHP = 50;
 	//УGЦ{СћВћHP
 	int enemyHP = maxHP;
 
