@@ -37,6 +37,12 @@ void GameScene::Initialize() {
 	moveCamera_.Initialize();
 	viewProjection_.Initialize();
 
+	titleSound = audio_->LoadWave("title.mp3");
+	gameSound = audio_->LoadWave("game.mp3");
+	clearSound = audio_->LoadWave("result.mp3");
+	overSound = audio_->LoadWave("result.mp3");
+
+	checkTitle = audio_->PlayWave(titleSound, true);
 }
 
 void GameScene::Update() {
@@ -44,6 +50,8 @@ void GameScene::Update() {
 	switch (scene)
 	{
 	case title://タイトル画面
+		audio_->StopWave(checkClear);
+		audio_->StopWave(checkOver);
 
 		//スペース押したらシーン切り替え
 		if (input_->TriggerKey(DIK_SPACE)) {
@@ -54,6 +62,8 @@ void GameScene::Update() {
 			enemy_->Initialize();
 			bossHP = enemy_->GetEnemyHP();
 
+			audio_->StopWave(checkTitle);
+			checkGame = audio_->PlayWave(gameSound, true);
 			//シーン移動
 			scene = appear;
 		}
@@ -61,6 +71,11 @@ void GameScene::Update() {
 		break;
 
 	case appear://ボス登場シーン
+
+		if (soundNowPlay == true && soundStop == false)
+		{
+			soundNowPlay = false;
+		}
 
 		enemy_->AppearMove();
 
@@ -77,6 +92,8 @@ void GameScene::Update() {
 		break;
 
 	case game:
+
+
 		bossHP = enemy_->GetEnemyHP();
 		player_->Update(bossHP);
 		enemy_->Update();
@@ -92,12 +109,9 @@ void GameScene::Update() {
 		viewProjection_.target.y = 0.0f;
 		viewProjection_.target.z = 0.0f;
 
-		//Rキーでタイトルへ
-		/*if (input_->PushKey(DIK_R)) {
-			scene = title;
-		}*/
-
 		if (player_->GetPlayerHp() <= 0) {
+			audio_->StopWave(checkGame);
+			checkClear = audio_->PlayWave(overSound, true);
 			scene = gameover;
 		}
 
@@ -119,6 +133,8 @@ void GameScene::Update() {
 
 		//SPACEキーでリザルトへ
 		if (input_->TriggerKey(DIK_SPACE)) {
+			audio_->StopWave(checkGame);
+			checkOver = audio_->PlayWave(clearSound, true);
 			scene = clear;
 		}
 		break;
@@ -129,6 +145,7 @@ void GameScene::Update() {
 		bossHP = enemy_->GetEnemyHP();
 		player_->Finish(bossHP);
 		if (input_->TriggerKey(DIK_SPACE)) {
+			checkTitle = audio_->PlayWave(titleSound, true);
 			scene = title;
 		}
 		break;
@@ -139,6 +156,7 @@ void GameScene::Update() {
 		bossHP = enemy_->GetEnemyHP();
 		player_->Finish(bossHP);
 		if (input_->TriggerKey(DIK_SPACE)) {
+			checkTitle = audio_->PlayWave(titleSound, true);
 			scene = title;
 		}
 		break;
@@ -209,6 +227,26 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+	switch (scene)
+	{
+	case title:
+		//float num = 60.0f;
+
+		break;
+
+	case appear:
+
+		break;
+
+	case game:
+
+		break;
+
+	case defeat:
+
+		break;
+
+	}
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);

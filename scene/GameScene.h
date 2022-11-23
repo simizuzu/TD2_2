@@ -88,6 +88,19 @@ private: // メンバ変数
 	//カメラの動き
 	MoveCamera moveCamera_;
 
+	// サウンド
+	uint32_t titleSound = 0;
+	uint32_t gameSound = 0;
+	uint32_t clearSound = 0;
+	uint32_t overSound = 0;
+
+	uint32_t checkTitle = 0;
+	uint32_t checkGame = 0;
+	uint32_t checkClear = 0;
+	uint32_t checkOver = 0;
+
+	bool soundNowPlay = false;
+	bool soundStop = false;
 	int bossHP;
 
 	/// <summary>
