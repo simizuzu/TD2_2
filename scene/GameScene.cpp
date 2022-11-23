@@ -5,8 +5,6 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-	delete player_;
-	delete enemy_;
 	delete skydome_;
 }
 
