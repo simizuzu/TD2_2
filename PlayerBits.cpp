@@ -4,7 +4,7 @@
 void PlayerBits::Initilize(const Vector3& position) {
 
 	//テクスチャ読み込み
-	model_.reset(Model::CreateFromOBJ("Heart", true));
+	model_ = Model::CreateFromOBJ("Heart", true);
 
 	for (int i = 0; i < bitMax; i++)
 	{

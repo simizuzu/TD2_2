@@ -44,7 +44,8 @@ private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	// モデル
-	std::unique_ptr<Model> model_;
+	//std::unique_ptr<Model> model_;
+	Model* model_ = nullptr;
 	
 	Input* input_ = nullptr;
 

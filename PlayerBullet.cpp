@@ -4,7 +4,7 @@
 void PlayerBullet::Initilize(const Vector3& position, const Vector3& velocity) {
 
 	//テクスチャ読み込み
-	model_.reset(Model::CreateFromOBJ("Player", true));
+	model_ = Model::CreateFromOBJ("Player", true);
 
 	//ワールドトランスフォームの初期化
 	worldTransformBullet_.rotation_ = { 0.0f, 0.0f, 0.0f };

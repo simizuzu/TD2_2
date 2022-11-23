@@ -40,7 +40,8 @@ private:
 	uint32_t textureHandle_ = 0;
 
 	// ƒ‚ƒfƒ‹
-	std::unique_ptr<Model> model_;
+	//std::unique_ptr<Model> model_;
+	Model* model_ = nullptr;
 
 	const float PI = 3.14159f;
 

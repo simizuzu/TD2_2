@@ -48,7 +48,8 @@ private:
 	uint32_t textureHandle_ = 0;
 
 	// ƒ‚ƒfƒ‹
-	std::unique_ptr<Model> model_;
+	//std::unique_ptr<Model> model_;
+	Model* model_ = nullptr;
 
 	//‘¬“x
 	Vector3 velocity_;

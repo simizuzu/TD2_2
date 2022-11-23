@@ -19,7 +19,7 @@ void PlayerModel::Initialize()
 	// çsóÒÇÃì]ëó
 	worldTransform_.TransferMatrix();
 
-	model_.reset(Model::CreateFromOBJ("Player", true));
+	model_ = Model::CreateFromOBJ("Player", true);
 
 	std::unique_ptr<PlayerBits> newBit = std::make_unique<PlayerBits>();
 	newBit->Initilize(worldTransform_.translation_);
