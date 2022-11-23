@@ -88,6 +88,8 @@ private: // メンバ変数
 	//カメラの動き
 	MoveCamera moveCamera_;
 
+	int bossHP;
+
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>

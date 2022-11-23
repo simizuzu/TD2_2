@@ -19,13 +19,13 @@ void PlayerBullet::Initilize(const Vector3& position, const Vector3& velocity) {
 	velocity_ = velocity;
 }
 
-void PlayerBullet::Update(WorldTransform worldTransform,float hp) {
+void PlayerBullet::Update(WorldTransform worldTransform,float hp, int enemyHp) {
 
 	//座標を移動させる(1フレーム分の移動量を足す)
 	worldTransformBullet_.translation_ += velocity_;
 
 	//時間経過でデス
-	if (--deathTimer_ <= 0 || --hp <= 0) {
+	if (--deathTimer_ <= 0 || hp-- <= 0 || enemyHp-- <= 0) {
 		isDead_ = true;
 	}
 
@@ -64,3 +64,10 @@ Vector3 PlayerBullet::GetWorldPos() {
 void PlayerBullet::OnCollision() {
 	isDead_ = true;
 };
+
+void PlayerBullet::Finish(int enemyHp)
+{
+	if (--enemyHp <= 0) {
+		isDead_ = true;
+	}
+}

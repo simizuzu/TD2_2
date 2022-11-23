@@ -47,6 +47,11 @@ public:
 	//敵HPのゲッター
 	int GetEnemyHP() { return enemyHP; }
 
+	float Dead()
+	{
+		return enemyHP = 0;
+	}
+
 	//ワールド行列のゲッター
 	WorldTransform GetWorldTransform() { return worldTransform_; }
 	//登場時の経過時間のゲッター

@@ -18,13 +18,15 @@ public:
 	/// <summary>
 	/// çXêV
 	/// </summary>
-	void Update(WorldTransform worldTransform,Vector3 V, float Hp);
+	void Update(WorldTransform worldTransform,Vector3 V, float Hp,int enemyHp);
 
 	/// <summary>
 	/// ï`âÊ
 	/// </summary>
 	/// <param name="viewProjection"></param>
 	void Draw(ViewProjection* viewProjection);
+
+	void Finish(int enemyHp);
 
 	bool IsDead() const { return isDead_; }
 

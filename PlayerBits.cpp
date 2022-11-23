@@ -17,13 +17,13 @@ void PlayerBits::Initilize(const Vector3& position) {
 
 }
 
-void PlayerBits::Update(WorldTransform worldTransform,Vector3 V, float Hp) {
+void PlayerBits::Update(WorldTransform worldTransform,Vector3 V, float hp, int enemyHp) {
 
-	bitMax = Hp;
+	bitMax = hp;
 
 	float r = 6.0f;
 
-	if (--bitMax <= 0) {
+	if (bitMax-- <= 0 || enemyHp-- <= 0) {
 		isDead_ = true;
 	}
 
@@ -82,3 +82,9 @@ void PlayerBits::Draw(ViewProjection* viewProjection) {
 	}
 }
 
+void PlayerBits::Finish(int enemyHp)
+{
+	if (--enemyHp <= 0) {
+		isDead_ = true;
+	}
+}

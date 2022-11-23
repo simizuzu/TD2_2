@@ -22,7 +22,7 @@ public:
 	/// <summary>
 	/// çXêV
 	/// </summary>
-	void Update(WorldTransform worldTransform, float hp);
+	void Update(WorldTransform worldTransform, float hp, int enemyHp);
 
 	/// <summary>
 	/// ï`âÊ
@@ -35,6 +35,8 @@ public:
 	Vector3 BulletPos() const { return worldTransformBullet_.translation_; }
 
 	Vector3 GetWorldPos();
+
+	void Finish(int enemyHp);
 
 	void OnCollision();
 

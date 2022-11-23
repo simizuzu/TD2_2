@@ -17,7 +17,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(int Hp);
 
 	/// <summary>
 	/// 描画
@@ -33,6 +33,8 @@ public:
 	{
 		return playerHp = 0;
 	}
+
+	void Finish(int enemyHp);
 
 	//ワールド行列のゲッター
 	WorldTransform GetWorldTransform() { return worldTransform_; }
@@ -70,6 +72,8 @@ private:
 	float damegeTimer = 0;
 
 	bool isTimer = false;
+
+	int enemyHp = 0;
 
 	//弾
 	std::list<std::unique_ptr<PlayerBullet>> bullets_;

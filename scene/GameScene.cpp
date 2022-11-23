@@ -52,6 +52,7 @@ void GameScene::Update() {
 			viewProjection_.Initialize();
 			player_->Initialize();
 			enemy_->Initialize();
+			bossHP = enemy_->GetEnemyHP();
 
 			//シーン移動
 			scene = appear;
@@ -81,7 +82,8 @@ void GameScene::Update() {
 		break;
 
 	case game:
-		player_->Update();
+		bossHP = enemy_->GetEnemyHP();
+		player_->Update(bossHP);
 		enemy_->Update();
 
 		//当たり判定
@@ -96,13 +98,13 @@ void GameScene::Update() {
 		viewProjection_.target.z = 0.0f;
 
 		//Rキーでタイトルへ
-		if (input_->PushKey(DIK_R)) {
+		/*if (input_->PushKey(DIK_R)) {
 			scene = title;
 		}
 
 		if (player_->GetPlayerHp() <= 0) {
 			scene = gameover;
-		}
+		}*/
 
 		//ボスを倒したらシーンチェンジ
 		if (enemy_->GetEnemyHP() <= 0) {
@@ -122,7 +124,6 @@ void GameScene::Update() {
 		break;
 
 	case defeat:
-		player_->Dead();
 		enemy_->DefeatMove();
 
 		moveCamera_.Defeat(&viewProjection_, viewProjectionPos, enemy_);
@@ -134,6 +135,10 @@ void GameScene::Update() {
 		break;
 
 	case clear:
+		player_->Dead();
+		enemy_->Dead();
+		bossHP = enemy_->GetEnemyHP();
+		player_->Finish(bossHP);
 		if (input_->TriggerKey(DIK_SPACE)) {
 			scene = title;
 		}
@@ -141,6 +146,9 @@ void GameScene::Update() {
 
 	case gameover:
 		player_->Dead();
+		enemy_->Dead();
+		bossHP = enemy_->GetEnemyHP();
+		player_->Finish(bossHP);
 		if (input_->TriggerKey(DIK_SPACE)) {
 			scene = title;
 		}

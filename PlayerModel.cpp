@@ -30,8 +30,10 @@ void PlayerModel::Initialize()
 
 }
 
-void PlayerModel::Update()
+void PlayerModel::Update(int Hp)
 {
+
+	enemyHp = Hp;
 
 	//キー入力で移動
 	if (input_->PushKey(DIK_A)) {
@@ -90,7 +92,7 @@ void PlayerModel::Update()
 
 	//弾更新
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
-		bullet->Update(worldTransform_,playerHp);
+		bullet->Update(worldTransform_,playerHp,enemyHp);
 	}
 
 	frontV = {worldTransform_.translation_.x - -sin(PI * radian) * 100.0f, worldTransform_.translation_.y - 0,worldTransform_.translation_.z - -cos(PI * radian) * 100.0f };
@@ -98,7 +100,7 @@ void PlayerModel::Update()
 	sideV = { frontV.z,0,frontV.x };
 
 	for (std::unique_ptr<PlayerBits>& bit : bits_) {
-		bit->Update(worldTransform_, frontV,playerHp);
+		bit->Update(worldTransform_, frontV,playerHp,enemyHp);
 	}
 
 }
@@ -140,4 +142,20 @@ void PlayerModel::Attack() {
 		}
 
 	}
+}
+
+void PlayerModel::Finish(int enemyHp)
+{
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) {
+		bullet->Finish(enemyHp);
+	}
+
+	for (std::unique_ptr<PlayerBits>& bit : bits_) {
+		bit->Finish(enemyHp);
+	}
+
+	//デスフラグの立った弾を削除
+	bullets_.remove_if([](std::unique_ptr<PlayerBullet>& bullet) { return bullet->IsDead(); });
+	bits_.remove_if([](std::unique_ptr<PlayerBits>& bits) { return bits->IsDead(); });
+
 }
