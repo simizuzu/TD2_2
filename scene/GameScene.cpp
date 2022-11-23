@@ -74,11 +74,6 @@ void GameScene::Update() {
 			scene = game;
 		}
 
-		debugText_->SetPos(20.0f, 20.0f);
-		debugText_->Printf("%f,%f,%f", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
-		debugText_->SetPos(20.0f, 40.0f);
-		debugText_->Printf("%f,%f,%f", viewProjection_.target.x, viewProjection_.target.y, viewProjection_.target.z);
-
 		break;
 
 	case game:
@@ -115,12 +110,6 @@ void GameScene::Update() {
 		//ビュープロジェクションの位置を保存
 		viewProjectionPos = viewProjection_.eye;
 
-		debugText_->SetPos(20.0f, 20.0f);
-		debugText_->Printf("%f,%f,%f", viewProjection_.eye.x, viewProjection_.eye.y, viewProjection_.eye.z);
-		debugText_->SetPos(20.0f, 40.0f);
-		debugText_->Printf("%f,%f,%f", viewProjection_.target.x, viewProjection_.target.y, viewProjection_.target.z);
-		debugText_->SetPos(20.0f, 80.0f);
-		debugText_->Printf("%d", enemy_->GetEnemyHP());
 		break;
 
 	case defeat:
@@ -156,8 +145,6 @@ void GameScene::Update() {
 	}
 
 	viewProjection_.UpdateMatrix();
-	debugText_->SetPos(20.0f, 100.0f);
-	debugText_->Printf("%d", scene);
 }
 
 void GameScene::Draw() {
