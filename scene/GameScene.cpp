@@ -102,6 +102,10 @@ void GameScene::Update() {
 			scene = title;
 		}
 
+		if (player_->GetPlayerHp() <= 0) {
+			scene = gameover;
+		}
+
 		//ボスを倒したらシーンチェンジ
 		if (enemy_->GetEnemyHP() <= 0) {
 			moveCamera_.Initialize();
@@ -124,16 +128,28 @@ void GameScene::Update() {
 
 		moveCamera_.Defeat(&viewProjection_, viewProjectionPos, enemy_);
 
-		//SPACEキーでタイトルへ
+		//SPACEキーでリザルトへ
+		if (input_->TriggerKey(DIK_SPACE)) {
+			scene = clear;
+		}
+		break;
+
+	case clear:
 		if (input_->TriggerKey(DIK_SPACE)) {
 			scene = title;
 		}
 		break;
 
+	case gameover:
+		if (input_->TriggerKey(DIK_SPACE)) {
+			scene = title;
+		}
+		break;
 	}
 
 	viewProjection_.UpdateMatrix();
-
+	debugText_->SetPos(20.0f, 100.0f);
+	debugText_->Printf("%d", scene);
 }
 
 void GameScene::Draw() {
