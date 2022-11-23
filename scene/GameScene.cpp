@@ -100,11 +100,11 @@ void GameScene::Update() {
 		//Rキーでタイトルへ
 		/*if (input_->PushKey(DIK_R)) {
 			scene = title;
-		}
+		}*/
 
 		if (player_->GetPlayerHp() <= 0) {
 			scene = gameover;
-		}*/
+		}
 
 		//ボスを倒したらシーンチェンジ
 		if (enemy_->GetEnemyHP() <= 0) {
