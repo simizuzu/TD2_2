@@ -34,15 +34,24 @@ void GameScene::Initialize() {
 	//天球の初期化
 	skydome_->Initialize(modelSkydome_);
 
+	titleTex = TextureManager::Load("title01.png");
+	resultTex1 = TextureManager::Load("result1.png");
+	resultTex2 = TextureManager::Load("result2.png");
+
+	spriteTitle.reset(Sprite::Create(titleTex, { 0,0 }));
+	resultTitle1.reset(Sprite::Create(resultTex1, { 0,0 }));
+	resultTitle2.reset(Sprite::Create(resultTex2,{0,0}));
+
+
 	moveCamera_.Initialize();
 	viewProjection_.Initialize();
 
-	titleSound = audio_->LoadWave("title.mp3");
-	gameSound = audio_->LoadWave("game.mp3");
-	clearSound = audio_->LoadWave("result.mp3");
-	overSound = audio_->LoadWave("result.mp3");
+	gameSound = AudioManager::GetInstance()->LoadAudio("Resources/game.mp3");
+	clearSound = AudioManager::GetInstance()->LoadAudio("Resources/result.mp3");
+	overSound = AudioManager::GetInstance()->LoadAudio("Resources/result.mp3");
+	titleSound = AudioManager::GetInstance()->LoadAudio("Resources/title.mp3");
 
-	checkTitle = audio_->PlayWave(titleSound, true);
+	AudioManager::GetInstance()->PlayWave(titleSound,true);
 }
 
 void GameScene::Update() {
@@ -50,8 +59,6 @@ void GameScene::Update() {
 	switch (scene)
 	{
 	case title://タイトル画面
-		audio_->StopWave(checkClear);
-		audio_->StopWave(checkOver);
 
 		//スペース押したらシーン切り替え
 		if (input_->TriggerKey(DIK_SPACE)) {
@@ -61,9 +68,8 @@ void GameScene::Update() {
 			player_->Initialize();
 			enemy_->Initialize();
 			bossHP = enemy_->GetEnemyHP();
-
-			audio_->StopWave(checkTitle);
-			checkGame = audio_->PlayWave(gameSound, true);
+			AudioManager::GetInstance()->StopWave(titleSound);
+			AudioManager::GetInstance()->PlayWave(gameSound, true);
 			//シーン移動
 			scene = appear;
 		}
@@ -71,6 +77,7 @@ void GameScene::Update() {
 		break;
 
 	case appear://ボス登場シーン
+
 
 		if (soundNowPlay == true && soundStop == false)
 		{
@@ -110,8 +117,8 @@ void GameScene::Update() {
 		viewProjection_.target.z = 0.0f;
 
 		if (player_->GetPlayerHp() <= 0) {
-			audio_->StopWave(checkGame);
-			checkClear = audio_->PlayWave(overSound, true);
+			AudioManager::GetInstance()->StopWave(gameSound);
+			AudioManager::GetInstance()->PlayWave(overSound, true);
 			scene = gameover;
 		}
 
@@ -133,8 +140,8 @@ void GameScene::Update() {
 
 		//SPACEキーでリザルトへ
 		if (input_->TriggerKey(DIK_SPACE)) {
-			audio_->StopWave(checkGame);
-			checkOver = audio_->PlayWave(clearSound, true);
+			AudioManager::GetInstance()->StopWave(gameSound);
+			AudioManager::GetInstance()->PlayWave(clearSound, true);
 			scene = clear;
 		}
 		break;
@@ -145,7 +152,8 @@ void GameScene::Update() {
 		bossHP = enemy_->GetEnemyHP();
 		player_->Finish(bossHP);
 		if (input_->TriggerKey(DIK_SPACE)) {
-			checkTitle = audio_->PlayWave(titleSound, true);
+			AudioManager::GetInstance()->StopWave(gameSound);
+			AudioManager::GetInstance()->PlayWave(titleSound, true);
 			scene = title;
 		}
 		break;
@@ -156,10 +164,12 @@ void GameScene::Update() {
 		bossHP = enemy_->GetEnemyHP();
 		player_->Finish(bossHP);
 		if (input_->TriggerKey(DIK_SPACE)) {
-			checkTitle = audio_->PlayWave(titleSound, true);
+			AudioManager::GetInstance()->StopWave(clearSound);
+ 			AudioManager::GetInstance()->PlayWave(titleSound, true);
 			scene = title;
 		}
 		break;
+
 	}
 
 	viewProjection_.UpdateMatrix();
@@ -231,7 +241,7 @@ void GameScene::Draw() {
 	{
 	case title:
 		//float num = 60.0f;
-
+		spriteTitle->Draw();
 		break;
 
 	case appear:
@@ -246,6 +256,14 @@ void GameScene::Draw() {
 
 		break;
 
+	case clear:
+		resultTitle1->Draw();
+		break;
+
+	case gameover:
+		resultTitle2->Draw();
+
+		break;
 	}
 
 	// デバッグテキストの描画

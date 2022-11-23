@@ -13,6 +13,9 @@
 #include "Enemy.h"
 #include "PlayerModel.h"
 #include "MoveCamera.h"
+#include "AudioManager.h"
+#include "TextureManager.h"
+#include "Sprite.h"
 
 enum Scene {
 	title,
@@ -20,7 +23,8 @@ enum Scene {
 	game,
 	defeat,
 	gameover,
-	clear
+	clear,
+	stop
 };
 
 
@@ -88,6 +92,14 @@ private: // メンバ変数
 	//カメラの動き
 	MoveCamera moveCamera_;
 
+	// スプライト
+	uint32_t titleTex = 0;
+	uint32_t resultTex1 = 0;
+	uint32_t resultTex2 = 0;
+	std::unique_ptr<Sprite> spriteTitle;
+	std::unique_ptr<Sprite> resultTitle1;
+	std::unique_ptr<Sprite> resultTitle2;
+
 	// サウンド
 	uint32_t titleSound = 0;
 	uint32_t gameSound = 0;
@@ -99,8 +111,8 @@ private: // メンバ変数
 	uint32_t checkClear = 0;
 	uint32_t checkOver = 0;
 
-	bool soundNowPlay = false;
-	bool soundStop = false;
+	int soundNowPlay = 0;
+	int soundStop = 0;
 	int bossHP;
 
 	/// <summary>
