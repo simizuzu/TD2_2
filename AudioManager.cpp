@@ -228,16 +228,16 @@ int32_t AudioManager::PlayWave(const uint32_t& Handle, bool LoopFlag)
 		itr++;
 	}
 
-	//“¯‚É“¯‚¶‰¹Œ¹‚ğÄ¶‚µ‚È‚¢
-	if (itr->playTrigger)
-	{
-		return -1;
-	}
-
 	//ƒ‹[ƒvÄ¶‚ÅÄ¶‚µ‚æ‚¤‚Æ‚µ‚½‚çŠù‚É—¬‚ê‚Ä‚¢‚é‚à‚Ì‚ğ’â~
 	if (LoopFlag && NowPlay(Handle))
 	{
 		itr->pSourceVoice->Stop();
+	}
+
+	//“¯‚É“¯‚¶‰¹Œ¹‚ğÄ¶‚µ‚È‚¢
+	if (itr->playTrigger)
+	{
+		return -1;
 	}
 
 

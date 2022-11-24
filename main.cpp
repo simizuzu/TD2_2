@@ -75,6 +75,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// 入力関連の毎フレーム処理
 		input->Update();
+		audioManager->Update();
 		// ゲームシーンの毎フレーム処理
 		gameScene->Update();
 		// 軸表示の更新
